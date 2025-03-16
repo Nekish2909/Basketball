@@ -1,9 +1,9 @@
-package com.example.basketballteacher; // Замените на ваш пакет
+package com.example.basketballteacher;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import android.view.Gravity;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView questionTextView;
     private Button answerButton1, answerButton2, answerButton3;
+    private LinearLayout startMenu, quizContent;
     private List<Integer> questionIndices;
     private int currentQuestionIndex = 0;
     private int score = 0;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация элементов интерфейса
+        startMenu = findViewById(R.id.startMenu);
+        quizContent = findViewById(R.id.quizContent);
         imageView = findViewById(R.id.imageView);
         questionTextView = findViewById(R.id.questionTextView);
         answerButton1 = findViewById(R.id.answerButton1);
@@ -38,12 +42,17 @@ public class MainActivity extends AppCompatActivity {
         // Инициализация списка индексов вопросов и их перемешивание
         questionIndices = new ArrayList<>();
         for (int i = 0; i < getResources().getStringArray(R.array.questions).length; i++) {
-            questionIndices.add(i); // Добавляем индексы вопросов (0, 1, 2, ..., N-1)
+            questionIndices.add(i);
         }
-        Collections.shuffle(questionIndices); // Перемешиваем вопросы
+        Collections.shuffle(questionIndices);
 
-        // Загрузка первого вопроса
-        loadQuestion();
+        // Обработчик кнопки "Начать"
+        Button startButton = findViewById(R.id.startButton);
+        startButton.setOnClickListener(v -> {
+            startMenu.setVisibility(View.GONE); // Скрываем меню
+            quizContent.setVisibility(View.VISIBLE); // Показываем тест
+            loadQuestion(); // Загружаем первый вопрос
+        });
     }
 
     private void loadQuestion() {
@@ -58,18 +67,11 @@ public class MainActivity extends AppCompatActivity {
         String[] answers = getResources().getStringArray(R.array.answers);
         int[] correctAnswers = getResources().getIntArray(R.array.correct_answers);
 
-        // Проверка, что questionIndex не выходит за пределы массива
-        if (questionIndex >= questions.length || questionIndex >= answers.length / 3 || questionIndex >= correctAnswers.length) {
-            Log.e("QuestionError", "Invalid question index: " + questionIndex);
-            showResult(); // Показываем результат, если индекс неверный
-            return;
-        }
-
         // Загрузка изображения
         String imageName = "img" + String.format("%03d", questionIndex + 1);
         int imageResId = getResources().getIdentifier(imageName, "drawable", getPackageName());
         if (imageResId == 0) {
-            Log.e("ImageDebug", "Image not found: " + imageName);
+            imageView.setImageResource(R.drawable.placeholder); // Заглушка, если изображение не найдено
         } else {
             imageView.setImageResource(imageResId);
         }
@@ -81,9 +83,14 @@ public class MainActivity extends AppCompatActivity {
         answerButton3.setText(answers[questionIndex * 3 + 2]);
 
         // Сброс цвета кнопок
-        answerButton1.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
-        answerButton2.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
-        answerButton3.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
+        answerButton1.setBackgroundColor(Color.parseColor("#FFBB86FC"));
+        answerButton2.setBackgroundColor(Color.parseColor("#FFBB86FC"));
+        answerButton3.setBackgroundColor(Color.parseColor("#FFBB86FC"));
+
+        // Включаем кнопки (если они были отключены)
+        answerButton1.setEnabled(true);
+        answerButton2.setEnabled(true);
+        answerButton3.setEnabled(true);
 
         // Установка обработчиков кликов
         answerButton1.setOnClickListener(v -> checkAnswer(0, correctAnswers[questionIndex]));
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Проверка правильности ответа
         if (selectedAnswerIndex == correctAnswerIndex) {
-            score++; // Увеличение счета при правильном ответе
+            score++;
         }
 
         // Блокировка кнопок после выбора ответа
@@ -115,16 +122,12 @@ public class MainActivity extends AppCompatActivity {
         answerButton3.setEnabled(false);
 
         // Задержка перед переходом к следующему вопросу
-        new Handler().postDelayed(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             currentQuestionIndex++;
             if (currentQuestionIndex < questionIndices.size()) {
                 loadQuestion(); // Загрузка следующего вопроса
-                answerButton1.setEnabled(true);
-                answerButton2.setEnabled(true);
-                answerButton3.setEnabled(true);
             } else {
-                // Тест завершен, отображение результата
-                showResult();
+                showResult(); // Тест завершен
             }
         }, 1500); // Задержка 1.5 секунды
     }
@@ -136,21 +139,34 @@ public class MainActivity extends AppCompatActivity {
         answerButton2.setVisibility(View.GONE);
         answerButton3.setVisibility(View.GONE);
 
-        // Отображаем результат
-        questionTextView.setText("Тест завершен! Ваш счет: " + score + " из " + questionIndices.size());
+        // Отображаем результат с крупным текстом
+        questionTextView.setTextSize(32); // Увеличиваем размер текста
+        questionTextView.setText("Ваш результат: " + score);
 
-        // (Опционально) Добавьте кнопку для повторного прохождения теста
+        // Создаем кнопку "Играть еще раз"
         Button restartButton = new Button(this);
-        restartButton.setText("Пройти тест снова");
-        restartButton.setOnClickListener(v -> restartTest());
+        restartButton.setText("Играть еще раз"); // Устанавливаем текст
+        restartButton.setTextSize(18); // Увеличиваем размер текста
+        restartButton.setTextColor(Color.BLACK); // Черный текст
+        restartButton.setPadding(32, 16, 32, 16); // Увеличиваем отступы
+        restartButton.setBackgroundResource(R.drawable.rounded_button_border); // Фиолетовая рамка
+        restartButton.setOnClickListener(v -> restartTest()); // Обработчик нажатия
+
+        // Параметры для выравнивания кнопки по центру
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.gravity = Gravity.CENTER; // Выравниваем по центру
+        params.setMargins(0, 32, 0, 0); // Отступ сверху
+        restartButton.setLayoutParams(params);
 
         // Добавляем кнопку в макет
-        LinearLayout mainLayout = findViewById(R.id.mainLayout);
-        mainLayout.addView(restartButton);
+        quizContent.addView(restartButton);
     }
 
     private void restartTest() {
-        // Сброс переменных и запуск теста заново
+        // Сброс переменных
         currentQuestionIndex = 0;
         score = 0;
         Collections.shuffle(questionIndices);
@@ -161,10 +177,9 @@ public class MainActivity extends AppCompatActivity {
         answerButton2.setVisibility(View.VISIBLE);
         answerButton3.setVisibility(View.VISIBLE);
 
-        // Удаляем кнопку "Пройти тест снова"
-        LinearLayout mainLayout = findViewById(R.id.mainLayout);
-        if (mainLayout.getChildCount() > 3) { // Убедитесь, что удаляем только кнопку restartButton
-            mainLayout.removeViewAt(mainLayout.getChildCount() - 1);
+        // Удаляем кнопку "Начать заново"
+        if (quizContent.getChildCount() > 3) { // Убедитесь, что удаляем только кнопку restartButton
+            quizContent.removeViewAt(quizContent.getChildCount() - 1);
         }
 
         // Загружаем первый вопрос

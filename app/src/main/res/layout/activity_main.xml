@@ -1,67 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@android:color/white">
 
-    <!-- Изображение -->
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/image_description" />
-
-    <!-- Вопрос -->
-    <TextView
-        android:id="@+id/questionTextView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:text="@string/sample_question" />
-
-    <!-- Варианты ответов -->
+    <!-- Начальное меню -->
     <LinearLayout
+        android:id="@+id/startMenu"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/white">
 
+        <!-- Кнопка "Начать" -->
         <Button
-            android:id="@+id/answerButton1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/sample_answer_1"
-            android:backgroundTint="@color/purple_200"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/answerButton2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/sample_answer_2"
-            android:backgroundTint="@color/purple_200"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/answerButton3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/sample_answer_3"
-            android:backgroundTint="@color/purple_200"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Начать"
+            android:textSize="24sp"
+            android:textColor="#FF6200EE"
+            android:background="@drawable/rounded_button_border"
+            android:padding="24dp"
+            android:layout_margin="16dp" />
     </LinearLayout>
-</LinearLayout>
+
+    <!-- Основной контент (скрыт по умолчанию) -->
+    <LinearLayout
+        android:id="@+id/quizContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Изображение -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/image_description" />
+
+        <!-- Вопрос -->
+        <TextView
+            android:id="@+id/questionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:text="@string/sample_question" />
+
+        <!-- Варианты ответов -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/answerButton1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/sample_answer_1"
+                android:backgroundTint="@color/purple_200"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/answerButton2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/sample_answer_2"
+                android:backgroundTint="@color/purple_200"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/answerButton3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/sample_answer_3"
+                android:backgroundTint="@color/purple_200"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
