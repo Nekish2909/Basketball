@@ -1,10 +1,11 @@
-package com.example.basketballteacher;
+package com.example.basketballteacher; // Замените на ваш пакет
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
@@ -44,54 +45,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadQuestion() {
-        // Получение текущего индекса вопроса
-        int questionIndex = questionIndices.get(currentQuestionIndex);
+        // Проверка, что вопросы не закончились
+        if (currentQuestionIndex >= questionIndices.size()) {
+            showResult(); // Если вопросы закончились, показываем результат
+            return;
+        }
 
-        // Загрузка вопросов, ответов и правильных ответов из ресурсов
+        int questionIndex = questionIndices.get(currentQuestionIndex);
         String[] questions = getResources().getStringArray(R.array.questions);
         String[] answers = getResources().getStringArray(R.array.answers);
         int[] correctAnswers = getResources().getIntArray(R.array.correct_answers);
 
-        // Загрузка изображения для текущего вопроса
-        String imageName = "img" + String.format("%03d", questionIndex + 1); // Формат: img001, img002 и т.д.
-        int imageResId = getResources().getIdentifier(imageName, "drawable", getPackageName());
+        // Проверка, что questionIndex не выходит за пределы массива
+        if (questionIndex >= questions.length || questionIndex >= answers.length / 3 || questionIndex >= correctAnswers.length) {
+            Log.e("QuestionError", "Invalid question index: " + questionIndex);
+            showResult(); // Показываем результат, если индекс неверный
+            return;
+        }
 
-        // Отладка: проверка загрузки изображения
+        // Загрузка изображения
+        String imageName = "img" + String.format("%03d", questionIndex + 1);
+        int imageResId = getResources().getIdentifier(imageName, "drawable", getPackageName());
         if (imageResId == 0) {
             Log.e("ImageDebug", "Image not found: " + imageName);
         } else {
             imageView.setImageResource(imageResId);
         }
 
-        // Установка текста вопроса
+        // Установка текста вопроса и ответов
         questionTextView.setText(questions[questionIndex]);
-
-        // Установка текста кнопок с ответами
         answerButton1.setText(answers[questionIndex * 3]);
         answerButton2.setText(answers[questionIndex * 3 + 1]);
         answerButton3.setText(answers[questionIndex * 3 + 2]);
 
-        // Установка обработчиков кликов для кнопок
-        answerButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(0, correctAnswers[questionIndex]);
-            }
-        });
-
-        answerButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(1, correctAnswers[questionIndex]);
-            }
-        });
-
-        answerButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(2, correctAnswers[questionIndex]);
-            }
-        });
+        // Установка обработчиков кликов
+        answerButton1.setOnClickListener(v -> checkAnswer(0, correctAnswers[questionIndex]));
+        answerButton2.setOnClickListener(v -> checkAnswer(1, correctAnswers[questionIndex]));
+        answerButton3.setOnClickListener(v -> checkAnswer(2, correctAnswers[questionIndex]));
     }
 
     private void checkAnswer(int selectedAnswerIndex, int correctAnswerIndex) {
@@ -106,10 +96,49 @@ public class MainActivity extends AppCompatActivity {
             loadQuestion(); // Загрузка следующего вопроса
         } else {
             // Тест завершен, отображение результата
-            questionTextView.setText("Тест завершен! Ваш счет: " + score);
-            answerButton1.setVisibility(View.GONE);
-            answerButton2.setVisibility(View.GONE);
-            answerButton3.setVisibility(View.GONE);
+            showResult();
         }
+    }
+
+    private void showResult() {
+        // Скрываем кнопки и изображение
+        imageView.setVisibility(View.GONE);
+        answerButton1.setVisibility(View.GONE);
+        answerButton2.setVisibility(View.GONE);
+        answerButton3.setVisibility(View.GONE);
+
+        // Отображаем результат
+        questionTextView.setText("Тест завершен! Ваш счет: " + score + " из " + questionIndices.size());
+
+        // (Опционально) Добавьте кнопку для повторного прохождения теста
+        Button restartButton = new Button(this);
+        restartButton.setText("Пройти тест снова");
+        restartButton.setOnClickListener(v -> restartTest());
+
+        // Добавляем кнопку в макет
+        LinearLayout mainLayout = findViewById(R.id.mainLayout);
+        mainLayout.addView(restartButton);
+    }
+
+    private void restartTest() {
+        // Сброс переменных и запуск теста заново
+        currentQuestionIndex = 0;
+        score = 0;
+        Collections.shuffle(questionIndices);
+
+        // Показываем элементы интерфейса
+        imageView.setVisibility(View.VISIBLE);
+        answerButton1.setVisibility(View.VISIBLE);
+        answerButton2.setVisibility(View.VISIBLE);
+        answerButton3.setVisibility(View.VISIBLE);
+
+        // Удаляем кнопку "Пройти тест снова"
+        LinearLayout mainLayout = findViewById(R.id.mainLayout);
+        if (mainLayout.getChildCount() > 3) { // Убедитесь, что удаляем только кнопку restartButton
+            mainLayout.removeViewAt(mainLayout.getChildCount() - 1);
+        }
+
+        // Загружаем первый вопрос
+        loadQuestion();
     }
 }

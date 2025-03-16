@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Basketball teacher</string>
+    <string name="image_description">Изображение для вопроса</string>
+    <string name="sample_question">Какой высоты должно быть кольцо в баскетболе?</string>
+    <string name="sample_answer_1">2.75 метра</string>
+    <string name="sample_answer_2">3.05 метра</string>
+    <string name="sample_answer_3">3.50 метра</string>
 </resources>
