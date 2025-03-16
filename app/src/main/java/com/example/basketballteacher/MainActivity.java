@@ -1,6 +1,8 @@
 package com.example.basketballteacher; // Замените на ваш пакет
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
         // Инициализация списка индексов вопросов и их перемешивание
         questionIndices = new ArrayList<>();
         for (int i = 0; i < getResources().getStringArray(R.array.questions).length; i++) {
-            questionIndices.add(i);
+            questionIndices.add(i); // Добавляем индексы вопросов (0, 1, 2, ..., N-1)
         }
-        Collections.shuffle(questionIndices);
+        Collections.shuffle(questionIndices); // Перемешиваем вопросы
 
         // Загрузка первого вопроса
         loadQuestion();
@@ -78,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
         answerButton2.setText(answers[questionIndex * 3 + 1]);
         answerButton3.setText(answers[questionIndex * 3 + 2]);
 
+        // Сброс цвета кнопок
+        answerButton1.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
+        answerButton2.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
+        answerButton3.setBackgroundColor(Color.parseColor("#FFBB86FC")); // Возвращаем исходный цвет
+
         // Установка обработчиков кликов
         answerButton1.setOnClickListener(v -> checkAnswer(0, correctAnswers[questionIndex]));
         answerButton2.setOnClickListener(v -> checkAnswer(1, correctAnswers[questionIndex]));
@@ -85,19 +92,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(int selectedAnswerIndex, int correctAnswerIndex) {
+        // Подсветка правильного ответа зеленым
+        if (correctAnswerIndex == 0) answerButton1.setBackgroundColor(Color.GREEN);
+        if (correctAnswerIndex == 1) answerButton2.setBackgroundColor(Color.GREEN);
+        if (correctAnswerIndex == 2) answerButton3.setBackgroundColor(Color.GREEN);
+
+        // Подсветка выбранного ответа (если он неправильный)
+        if (selectedAnswerIndex != correctAnswerIndex) {
+            if (selectedAnswerIndex == 0) answerButton1.setBackgroundColor(Color.RED);
+            if (selectedAnswerIndex == 1) answerButton2.setBackgroundColor(Color.RED);
+            if (selectedAnswerIndex == 2) answerButton3.setBackgroundColor(Color.RED);
+        }
+
         // Проверка правильности ответа
         if (selectedAnswerIndex == correctAnswerIndex) {
             score++; // Увеличение счета при правильном ответе
         }
 
-        // Переход к следующему вопросу
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questionIndices.size()) {
-            loadQuestion(); // Загрузка следующего вопроса
-        } else {
-            // Тест завершен, отображение результата
-            showResult();
-        }
+        // Блокировка кнопок после выбора ответа
+        answerButton1.setEnabled(false);
+        answerButton2.setEnabled(false);
+        answerButton3.setEnabled(false);
+
+        // Задержка перед переходом к следующему вопросу
+        new Handler().postDelayed(() -> {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionIndices.size()) {
+                loadQuestion(); // Загрузка следующего вопроса
+                answerButton1.setEnabled(true);
+                answerButton2.setEnabled(true);
+                answerButton3.setEnabled(true);
+            } else {
+                // Тест завершен, отображение результата
+                showResult();
+            }
+        }, 1500); // Задержка 1.5 секунды
     }
 
     private void showResult() {
