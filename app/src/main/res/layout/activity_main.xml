@@ -14,12 +14,24 @@
         android:gravity="center"
         android:background="@android:color/white">
 
-        <!-- Кнопка "Начать" -->
+        <!-- Кнопка "Старт" -->
         <Button
             android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Начать"
+            android:text="Старт"
+            android:textSize="24sp"
+            android:textColor="#FF6200EE"
+            android:background="@drawable/rounded_button_border"
+            android:padding="24dp"
+            android:layout_margin="16dp" />
+
+        <!-- Кнопка "Узнать" -->
+        <Button
+            android:id="@+id/learnButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Узнать"
             android:textSize="24sp"
             android:textColor="#FF6200EE"
             android:background="@drawable/rounded_button_border"
@@ -93,5 +105,68 @@
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
+    </LinearLayout>
+
+    <!-- Экран с правилами (скрыт по умолчанию) -->
+    <LinearLayout
+        android:id="@+id/rulesContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Крестик для возврата в меню -->
+        <ImageView
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:layout_gravity="end"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/close_description" />
+
+        <!-- Название правила -->
+        <TextView
+            android:id="@+id/ruleTitle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:text="Название правила"
+            android:padding="16dp" />
+
+        <!-- Текст правила -->
+        <TextView
+            android:id="@+id/ruleText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="Текст правила"
+            android:padding="16dp" />
+
+        <!-- Изображение правила -->
+        <ImageView
+            android:id="@+id/ruleImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/rule_image_description" />
+
+        <!-- Кнопка "Следующее правило" -->
+        <Button
+            android:id="@+id/nextRuleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Следующее правило"
+            android:textSize="18sp"
+            android:textColor="#FF6200EE"
+            android:background="@drawable/rounded_button_border"
+            android:padding="16dp"
+            android:layout_gravity="end"
+            android:layout_margin="16dp" />
     </LinearLayout>
 </FrameLayout>

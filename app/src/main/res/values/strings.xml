@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">Basketball Teacher</string> <!-- Добавьте эту строку -->
+    <string name="app_name">Basketball Teacher</string>
     <string name="image_description">Изображение вопроса</string>
     <string name="sample_question">Пример вопроса</string>
     <string name="sample_answer_1">Ответ 1</string>
     <string name="sample_answer_2">Ответ 2</string>
     <string name="sample_answer_3">Ответ 3</string>
+    <string name="close_description">Закрыть</string>
+    <string name="rule_image_description">Изображение правила</string>
 </resources>
